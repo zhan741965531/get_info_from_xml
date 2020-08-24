@@ -3,7 +3,9 @@ import xlwt
 import os
 import re
 import glob
+
 xmls = glob.glob('*.xml')
+
 for xml in xmls:
     path = os.path.abspath(xml)
     text=open(path,encoding="utf-8").read()
@@ -58,10 +60,12 @@ for xml in xmls:
     for rank in root.iter(tag="vuln_resove_info"):
         value_rank.append(rank.attrib['type'])
         key_rank.append(rank.attrib['vtitle'])
+
     for each in range(len(value_rank)):
         string = str(value_rank[each])
         string = string.replace('危','')
         value_rank[each] = string
+
     for k in range(len(key_rank)):
         dict_rank[key_rank[k]] = value_rank[k]
         dict_text[key_rank[k]] = value_text[k]
@@ -85,6 +89,10 @@ for xml in xmls:
         workbook = xlwt.Workbook(encoding="utf-8")
         worksheet = workbook.add_sheet('sheet1')
 
+    if (len(holes) == 1):
+        workbook = xlwt.Workbook(encoding="utf-8")
+        worksheet = workbook.add_sheet('sheet1')
+
     for j in range(len(title)):
         worksheet.write(0,j,title[j])
 
@@ -103,5 +111,8 @@ for xml in xmls:
             if j == holes[i]:
                 worksheet.write(l,10,dict_sove.get(j))
         worksheet.write(l,12,vuln_url_info[i])
+        name = name.replace('https://','')
+        name = name.replace('http://','')
+        name = name.replace('/','-')
         workbook.save(name)
     print("生成报告:",name)
